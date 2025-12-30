@@ -10,13 +10,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: SSH into EC2 and deploy Nginx
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_KEY }}
-          script: |
-            docker pull nginx
-            docker run -d -p 80:80 --name nginx-server nginx || true
-            docker ps
+    - name: SSH into EC2 and deploy Nginx
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USER }}
+        key: ${{ secrets.EC2_KEY }}
+        script: |
+          whoami
+          docker --version
+          docker pull nginx
+          docker stop nginx-server || true
+          docker rm nginx-server || true
+          docker run -d -p 80:80 --name nginx-server nginx
+          docker ps
+
